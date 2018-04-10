@@ -2,7 +2,6 @@
 call plug#begin('~/.config/nvim/plugged')
 
 " To try at some point
-" Plug 'Shougo/deoplete.nvim'
 " Plug 'Shougo/neco-vim'
 
 " Can't live without
@@ -19,17 +18,24 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-surround'
 Plug 'd11wtq/ctrlp_bdelete.vim'
 Plug 'lucidstack/ctrlp-mpc.vim'
+Plug 'godlygeek/tabular'
+Plug 'mattn/emmet-vim'
 
 " Ruby and Rails
 Plug 'tpope/vim-rails'
 Plug 'kchmck/vim-coffee-script'
-Plug 'mattn/emmet-vim', { 'for': 'html' }
 
 " Elixir and Phoenix
 Plug 'awetzel/elixir.nvim', { 'do': 'yes \| ./install.sh' }
-Plug 'elixir-lang/vim-elixir', { 'for': 'elixir' }
-Plug 'avdgaag/vim-phoenix', { 'for': 'elixir' }
-Plug 'powerman/vim-plugin-AnsiEsc' | Plug 'slashmili/alchemist.vim', { 'for': 'elixir' }
+Plug 'elixir-lang/vim-elixir'
+Plug 'avdgaag/vim-phoenix'
+Plug 'slashmili/alchemist.vim'
+Plug 'Shougo/deoplete.nvim'
+
+" Clojure
+Plug 'guns/vim-clojure-static'
+Plug 'tpope/vim-fireplace'
+Plug 'vim-scripts/paredit.vim'
 
 " Javascript
 Plug 'elzr/vim-json', { 'for': 'javascript' }
@@ -38,13 +44,17 @@ Plug 'mxw/vim-jsx', { 'for': 'javascript' }
 Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'mtscout6/vim-cjsx', { 'for': 'javascript' }
+Plug 'ElmCast/elm-vim'
+
+" Crystal
+Plug 'rhysd/vim-crystal'
 
 " Markdown
 Plug 'jtratner/vim-flavored-markdown', { 'for': 'markdown' }
 
 " UI Plugins
-Plug 'morhetz/gruvbox'
-Plug 'vim-airline/vim-airline', { 'commit': 'ce44577' }
+Plug 'whatyouhide/vim-gotham'
+Plug 'vim-airline/vim-airline'
 
 call plug#end()
 
@@ -56,6 +66,7 @@ set number
 set relativenumber
 set nowrap
 set cursorline
+set smartcase
 set tabstop=4 shiftwidth=2 softtabstop=2 expandtab
 let mapleader=","
 
@@ -64,33 +75,47 @@ set backup
 set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 
-" Set windows up
-set winwidth=85 colorcolumn=81 list listchars=tab:▸\ ,trail:•,nbsp:⋅
+" Window
+set winwidth=84 colorcolumn=81 list listchars=tab:▸\ ,trail:•,nbsp:⋅
 
 " Colors
 set background=dark
-colorscheme gruvbox
+" colorscheme gruvbox
+colorscheme gotham
+
+set foldmethod=syntax
+set nofoldenable
 
 " Spelling
-autocmd FileType markdown set spell
-autocmd FileType markdown set spell spelllang=en_us
-autocmd FileType markdown set complete+=kspell
-autocmd FileType gitcommit set spell
-autocmd FileType gitcommit set spell spelllang=en_us
-autocmd FileType gitcommit set complete+=kspell
+" autocmd FileType markdown set spell
+" autocmd FileType markdown set spell spelllang=en_us
+" autocmd FileType markdown set complete+=kspell
+" autocmd FileType gitcommit set spell
+" autocmd FileType gitcommit set spell spelllang=en_us
+" autocmd FileType gitcommit set complete+=kspell
+
+" Set formating program to use par
+"   use the gq command to format text (gqip ftw)
+if executable('par')
+  set formatprg=par\ -w80
+endif
+
 
 "" Plugin Customizations
+
+" Elm
+let g:elm_format_autosave = 1
 
 " AirLine
 set laststatus=2 " enable airline even if no splits
 set showcmd
-let g:airline_theme='gruvbox'
+let g:airline_theme='gotham'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#branch#enabled = 1
 let g:airline_symbols = {}
 let g:airline_symbols.branch = '⎇ '
 let g:airline_symbols.paste = 'ρ'
-let g:airline#extensions#tabline#enabled = 0 " set 1 for buffer line
+let g:airline#extensions#tabline#enabled = 1 " set 1 for buffer line
 let g:bufferline_echo = 0
 let g:airline_mode_map = {
       \ 'n' : 'N',
@@ -105,6 +130,7 @@ let g:airline_mode_map = {
 " CtrlP
 if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor
+  let g:ctrlp_custom_ignore = '_build\|node_modules\|DS_Store\|git'
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 endif
 let g:ctrlp_extensions = ['mpc']
@@ -115,49 +141,55 @@ let g:markdown_fenced_languages=['ruby', 'javascript', 'clojure', 'sh', 'html', 
 autocmd BufNewFile,BufReadPost *.md,*.markdown set filetype=markdown
 autocmd FileType markdown set textwidth=80
 
+
 "" MISC KEY MAPS
 
-" Sheer awesomeness
-nnoremap <Leader>m :CtrlPMpc<CR>
+" inoremap kj <esc>
 
 " CtrlP buffer
 nnoremap <leader>b :CtrlPBuffer<cr>
 
-" convert stupid 18 syntax
-map <leader>19 :%s/:\(\w*\)\s*=>\s*/\1: /gci<cr>
-map <leader>19! :%s/:\(\w*\)\s*=>\s*/\1: /gi<cr>
+nnoremap <leader>d "adiw:r!mix hex.info <C-r>a <bar> sed -n 's/Config\:\ // p'<cr>kJ
+
+" convert stupid ruby 1.8 hash syntax
+nnoremap <leader>19 :%s/:\(\w*\)\s*=>\s*/\1: /gci<cr>
+nnoremap <leader>19! :%s/:\(\w*\)\s*=>\s*/\1: /gi<cr>
 
 " search with Ag
-noremap <leader>a :Ag<space>
+nnoremap <leader>a :Ag<space>
 
 " no-op fucking Q
-nmap Q <nop>
+nnoremap Q <nop>
 
 " quit all other splits
-nmap <silent> <leader>q :only<cr>
+nnoremap <silent> <leader>q :only<cr>
 
 " fix whitespace
-nmap <silent> <leader>w m`:%s/\s\+$//e<cr>``:noh<cr>
+" nnoremap <silent> <leader>w m`:%s/\s\+$//e<cr>``:noh<cr>
+nnoremap <silent> <leader>w m`:let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:noh<cr>``
 
-" Edit this file
-nmap <silent> <leader>v :vsp $MYVIMRC<cr>
+" Edit this config file
+nnoremap <silent> <leader>v :vsp $MYVIMRC<cr>
 
 " Map tab and shift-tab to switch buffers.
-nmap <silent> <tab> :bn<cr>
-nmap <silent> <S-tab> :bp<cr>
+nnoremap <silent> <tab> :bn<cr>
+nnoremap <silent> <S-tab> :bp<cr>
 
 " easy buffer switching
 nnoremap <silent> <leader><leader> <c-^>
 
 " Easier window nav
-nmap <C-h> <C-w>h
-nmap <C-j> <C-w>j
-nmap <C-k> <C-w>k
-nmap <C-l> <C-w>l
-nmap <A-h> <C-w>h
-nmap <A-j> <C-w>j
-nmap <A-k> <C-w>k
-nmap <A-l> <C-w>l
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
+
+" turns 'thing' into 'let(:thing) { double(:thing) }'
+nmap <leader>l $Bveyilet(:A) { double(:pA) }
 
 " Vim Test Mappings
 map <silent> <leader>t :TestNearest<CR>
@@ -180,9 +212,23 @@ if has("nvim")
   let test#strategy="neoterm"
 
   " vertical split instead of the default horizontal
-  let g:neoterm_position="vertical"
+  " let g:neoterm_position="vertical"
 
-  nnoremap <silent> <leader>c :Tclose<cr>
+  " Toggle Neoterm Position
+  function NeotermTogglePosition()
+    if g:neoterm_position ==? "vertical"
+      let g:neoterm_position="horizontal"
+      echom "Set neoterm position to horizontal"
+    else
+      let g:neoterm_position="vertical"
+      echom "Set neoterm position to vertical"
+    endif
+    T exit
+  endfunction
+  nnoremap <leader>z :call NeotermTogglePosition()<cr>
+
+  nnoremap <silent> <leader>c :Ttoggle<cr>
+  nnoremap <silent> <leader>o :Topen<cr>
 
   " pretty much essential: by default in terminal mode, you have to press ctrl-\-n to get into normal mode
   " ain't nobody got time for that
