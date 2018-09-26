@@ -54,7 +54,7 @@ Plug 'jtratner/vim-flavored-markdown', { 'for': 'markdown' }
 
 " UI Plugins
 Plug 'whatyouhide/vim-gotham'
-Plug 'vim-airline/vim-airline'
+Plug 'itchyny/lightline.vim'
 
 call plug#end()
 
@@ -75,13 +75,9 @@ set backup
 set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 
+
 " Window
 set winwidth=84 colorcolumn=81 list listchars=tab:▸\ ,trail:•,nbsp:⋅
-
-" Colors
-set background=dark
-" colorscheme gruvbox
-colorscheme gotham
 
 set foldmethod=syntax
 set nofoldenable
@@ -90,56 +86,55 @@ set nofoldenable
 " autocmd FileType markdown set spell
 " autocmd FileType markdown set spell spelllang=en_us
 " autocmd FileType markdown set complete+=kspell
-" autocmd FileType gitcommit set spell
-" autocmd FileType gitcommit set spell spelllang=en_us
-" autocmd FileType gitcommit set complete+=kspell
 
 " Set formating program to use par
 "   use the gq command to format text (gqip ftw)
 if executable('par')
-  set formatprg=par\ -w80
+  set formatprg=par\ -w78
 endif
 
+" Autocommands
+autocmd FileType markdown set textwidth=80 colorcolumn=81
+autocmd FileType gitcommit set textwidth=50 colorcolumn=51
+" autocmd FileType gitcommit set spell spelllang=en_us complete+=kspell
+
+" Colors
+" set t_Co=256
+" set termguicolors
+" let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+" let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+" set background=dark " Setting dark mode
+colorscheme gotham
+let g:deus_termcolors=256
 
 "" Plugin Customizations
+
+" Lightline
+set laststatus=2 " enable lightline even if no splits
+set showcmd
+set noshowmode
+let g:bufferline_echo = 0
+let g:lightline = { 'colorscheme': 'gotham' }
 
 " Elm
 let g:elm_format_autosave = 1
 
-" AirLine
-set laststatus=2 " enable airline even if no splits
-set showcmd
-let g:airline_theme='gotham'
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#branch#enabled = 1
-let g:airline_symbols = {}
-let g:airline_symbols.branch = '⎇ '
-let g:airline_symbols.paste = 'ρ'
-let g:airline#extensions#tabline#enabled = 1 " set 1 for buffer line
-let g:bufferline_echo = 0
-let g:airline_mode_map = {
-      \ 'n' : 'N',
-      \ 'i' : 'I',
-      \ 'R' : 'REPLACE',
-      \ 'v' : 'VISUAL',
-      \ 'V' : 'V-LINE',
-      \ 'c' : 'CMD   ',
-      \ '': 'V-BLCK',
-      \ }
-
 " CtrlP
 if executable('ag')
+  " Use ag over grep
   set grepprg=ag\ --nogroup\ --nocolor
-  let g:ctrlp_custom_ignore = '_build\|node_modules\|DS_Store\|git'
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
 endif
-let g:ctrlp_extensions = ['mpc']
 call ctrlp_bdelete#init()
 
 " Use fenced code blocks in markdown
 let g:markdown_fenced_languages=['ruby', 'javascript', 'clojure', 'sh', 'html', 'sass', 'scss', 'haml', 'erlang']
 autocmd BufNewFile,BufReadPost *.md,*.markdown set filetype=markdown
-autocmd FileType markdown set textwidth=80
 
 
 "" MISC KEY MAPS
@@ -149,7 +144,7 @@ autocmd FileType markdown set textwidth=80
 " CtrlP buffer
 nnoremap <leader>b :CtrlPBuffer<cr>
 
-nnoremap <leader>d "adiw:r!mix hex.info <C-r>a <bar> sed -n 's/Config\:\ // p'<cr>kJ
+nnoremap <leader>h "adiw:r!mix hex.info <C-r>a <bar> sed -n 's/Config\:\ // p'<cr>kJ
 
 " convert stupid ruby 1.8 hash syntax
 nnoremap <leader>19 :%s/:\(\w*\)\s*=>\s*/\1: /gci<cr>
@@ -162,7 +157,7 @@ nnoremap <leader>a :Ag<space>
 nnoremap Q <nop>
 
 " quit all other splits
-nnoremap <silent> <leader>q :only<cr>
+nnoremap <silent> <leader>o :only<cr>
 
 " fix whitespace
 " nnoremap <silent> <leader>w m`:%s/\s\+$//e<cr>``:noh<cr>
@@ -189,7 +184,7 @@ nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
 " turns 'thing' into 'let(:thing) { double(:thing) }'
-nmap <leader>l $Bveyilet(:A) { double(:pA) }
+autocmd FileType ruby nnoremap <buffer> <leader>l $Bveyilet(:<esc>A) { double(:<esc>pA) }<esc>
 
 " Vim Test Mappings
 map <silent> <leader>t :TestNearest<CR>
@@ -197,6 +192,21 @@ map <silent> <leader>f :TestFile<CR>
 map <silent> <leader>T :TestSuite<CR>
 map <silent> <leader>r :TestLast<CR>
 map <silent> <leader>g :TestVisit<CR>
+
+autocmd FileType elixir nnoremap <buffer> <leader>p Orequire IEx; IEx.pry()<esc>
+
+autocmd FileType elixir nnoremap <buffer> <leader>d o@doc """<c-m>Documentation<c-m>"""<esc>kviw
+" Elixir - autoformat elixir if the current elixir version is 1.6.5 or above
+let s:elixir_version = system("elixir --version|tail -1")
+if s:elixir_version =~ '1.6.[5-9]'
+  autocmd BufWritePost *.exs silent call RunElixirFormatter()
+  autocmd BufWritePost *.ex silent call RunElixirFormatter()
+
+  function RunElixirFormatter()
+    :!mix format %
+    :e
+  endfunction
+endif
 
 "" neovim-specific config
 if has("nvim")
@@ -209,26 +219,31 @@ if has("nvim")
   set mouse-=a
 
   " run tests with :T
-  let test#strategy="neoterm"
+  let test#strategy = "neoterm"
+
+  let g:neoterm_default_mod = "horizontal rightbelow"
+
+  map <silent> <leader>c :T mix credo<CR>
+  map <silent> <leader>q :Ttoggle<CR>
 
   " vertical split instead of the default horizontal
   " let g:neoterm_position="vertical"
 
   " Toggle Neoterm Position
-  function NeotermTogglePosition()
-    if g:neoterm_position ==? "vertical"
-      let g:neoterm_position="horizontal"
-      echom "Set neoterm position to horizontal"
-    else
-      let g:neoterm_position="vertical"
-      echom "Set neoterm position to vertical"
-    endif
-    T exit
-  endfunction
-  nnoremap <leader>z :call NeotermTogglePosition()<cr>
-
-  nnoremap <silent> <leader>c :Ttoggle<cr>
-  nnoremap <silent> <leader>o :Topen<cr>
+  " function NeotermTogglePosition()
+  "   if g:neoterm_position ==? "vertical"
+  "     let g:neoterm_position="horizontal"
+  "     echom "Set neoterm position to horizontal"
+  "   else
+  "     let g:neoterm_position="vertical"
+  "     echom "Set neoterm position to vertical"
+  "   endif
+  "   T exit
+  " endfunction
+  " nnoremap <leader>z :call NeotermTogglePosition()<cr>
+  "
+  " nnoremap <silent> <leader>c :Ttoggle<cr>
+  " nnoremap <silent> <leader>o :Topen<cr>
 
   " pretty much essential: by default in terminal mode, you have to press ctrl-\-n to get into normal mode
   " ain't nobody got time for that
