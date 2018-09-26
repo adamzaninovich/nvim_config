@@ -99,11 +99,11 @@ autocmd FileType gitcommit set textwidth=50 colorcolumn=51
 " autocmd FileType gitcommit set spell spelllang=en_us complete+=kspell
 
 " Colors
-" set t_Co=256
-" set termguicolors
-" let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-" let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-" set background=dark " Setting dark mode
+set t_Co=256
+set termguicolors
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+set background=dark " Setting dark mode
 colorscheme gotham
 let g:deus_termcolors=256
 
