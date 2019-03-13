@@ -52,14 +52,19 @@ Plug 'rhysd/vim-crystal'
 " Markdown
 Plug 'jtratner/vim-flavored-markdown', { 'for': 'markdown' }
 
+" Trying Out
+Plug 'airblade/vim-gitgutter'
+
 " UI Plugins
-Plug 'whatyouhide/vim-gotham'
+" Plug 'whatyouhide/vim-gotham'
+Plug 'arcticicestudio/nord-vim'
 Plug 'itchyny/lightline.vim'
 
 call plug#end()
 
 "" Basic Config
 
+set updatetime=100
 set visualbell
 set hidden
 set number
@@ -90,7 +95,7 @@ set nofoldenable
 " Set formating program to use par
 "   use the gq command to format text (gqip ftw)
 if executable('par')
-  set formatprg=par\ -w78
+  set formatprg=par\ -w65
 endif
 
 " Autocommands
@@ -99,13 +104,15 @@ autocmd FileType gitcommit set textwidth=50 colorcolumn=51
 " autocmd FileType gitcommit set spell spelllang=en_us complete+=kspell
 
 " Colors
-set t_Co=256
-set termguicolors
-let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-set background=dark " Setting dark mode
-colorscheme gotham
-let g:deus_termcolors=256
+" set t_Co=256
+" set termguicolors
+" let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+" let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+" set background=dark " Setting dark mode
+let g:nord_italic = 1
+let g:nord_italic_comments = 1
+let g:nord_cursor_line_number_background = 1
+colorscheme nord
 
 "" Plugin Customizations
 
@@ -114,7 +121,7 @@ set laststatus=2 " enable lightline even if no splits
 set showcmd
 set noshowmode
 let g:bufferline_echo = 0
-let g:lightline = { 'colorscheme': 'gotham' }
+let g:lightline = { 'colorscheme': 'nord' }
 
 " Elm
 let g:elm_format_autosave = 1
@@ -205,6 +212,7 @@ if s:elixir_version =~ '1.6.[5-9]'
   function RunElixirFormatter()
     :!mix format %
     :e
+    :syntax on
   endfunction
 endif
 
