@@ -32,22 +32,25 @@ Plug 'avdgaag/vim-phoenix'
 Plug 'slashmili/alchemist.vim'
 Plug 'Shougo/deoplete.nvim'
 
+" Rust
+Plug 'rust-lang/rust.vim'
+
 " Clojure
-Plug 'guns/vim-clojure-static'
-Plug 'tpope/vim-fireplace'
-Plug 'vim-scripts/paredit.vim'
+" Plug 'guns/vim-clojure-static'
+" Plug 'tpope/vim-fireplace'
+" Plug 'vim-scripts/paredit.vim'
 
 " Javascript
 Plug 'elzr/vim-json', { 'for': 'javascript' }
 Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
-Plug 'mxw/vim-jsx', { 'for': 'javascript' }
-Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
-Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
-Plug 'mtscout6/vim-cjsx', { 'for': 'javascript' }
-Plug 'ElmCast/elm-vim'
+" Plug 'mxw/vim-jsx', { 'for': 'javascript' }
+" Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
+" Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+" Plug 'mtscout6/vim-cjsx', { 'for': 'javascript' }
+" Plug 'ElmCast/elm-vim'
 
 " Crystal
-Plug 'rhysd/vim-crystal'
+" Plug 'rhysd/vim-crystal'
 
 " Markdown
 Plug 'jtratner/vim-flavored-markdown', { 'for': 'markdown' }
@@ -205,7 +208,7 @@ autocmd FileType elixir nnoremap <buffer> <leader>p Orequire IEx; IEx.pry()<esc>
 autocmd FileType elixir nnoremap <buffer> <leader>d o@doc """<c-m>Documentation<c-m>"""<esc>kviw
 " Elixir - autoformat elixir if the current elixir version is 1.6.5 or above
 let s:elixir_version = system("elixir --version|tail -1")
-if s:elixir_version =~ '1.6.[5-9]'
+if s:elixir_version =~ '1.[6-9]'
   autocmd BufWritePost *.exs silent call RunElixirFormatter()
   autocmd BufWritePost *.ex silent call RunElixirFormatter()
 
@@ -215,6 +218,9 @@ if s:elixir_version =~ '1.6.[5-9]'
     :syntax on
   endfunction
 endif
+
+" Rust - autoformat rust when saving
+let g:rustfmt_autosave = 1
 
 "" neovim-specific config
 if has("nvim")
