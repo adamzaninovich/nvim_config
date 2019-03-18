@@ -59,7 +59,7 @@ Plug 'jtratner/vim-flavored-markdown', { 'for': 'markdown' }
 Plug 'airblade/vim-gitgutter'
 
 " UI Plugins
-" Plug 'whatyouhide/vim-gotham'
+Plug 'whatyouhide/vim-gotham'
 Plug 'arcticicestudio/nord-vim'
 Plug 'itchyny/lightline.vim'
 
@@ -111,11 +111,10 @@ autocmd FileType gitcommit set textwidth=50 colorcolumn=51
 " set termguicolors
 " let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 " let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-" set background=dark " Setting dark mode
-let g:nord_italic = 1
-let g:nord_italic_comments = 1
-let g:nord_cursor_line_number_background = 1
-colorscheme nord
+" let g:nord_italic = 1
+" let g:nord_italic_comments = 1
+" let g:nord_cursor_line_number_background = 1
+colorscheme gotham
 
 "" Plugin Customizations
 
