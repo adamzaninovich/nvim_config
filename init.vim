@@ -7,8 +7,6 @@ call plug#begin('~/.config/nvim/plugged')
 " Can't live without
 Plug 'kassio/neoterm'
 Plug 'janko-m/vim-test'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'epmatsw/ag.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-vinegar'
@@ -16,10 +14,9 @@ Plug 'tpope/vim-vinegar'
 " Extra nice
 Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-surround'
-Plug 'd11wtq/ctrlp_bdelete.vim'
-Plug 'lucidstack/ctrlp-mpc.vim'
-Plug 'godlygeek/tabular'
 Plug 'mattn/emmet-vim'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
 
 " Ruby and Rails
 Plug 'tpope/vim-rails'
@@ -83,6 +80,14 @@ set backup
 set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 
+" Show file options above the command line
+" (This is default with nvim, but fuck it, let's be explicit)
+set wildmenu
+
+" Don't offer to open certain files/directories
+set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png,*.ico
+set wildignore+=*.pdf,*.psd
+set wildignore+=node_modules/*,bower_components/*
 
 " Window
 set winwidth=84 colorcolumn=81 list listchars=tab:▸\ ,trail:•,nbsp:⋅
@@ -128,18 +133,18 @@ let g:lightline = { 'colorscheme': 'nord' }
 " Elm
 let g:elm_format_autosave = 1
 
-" CtrlP
+" fzf
 if executable('ag')
   " Use ag over grep
   set grepprg=ag\ --nogroup\ --nocolor
 
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+  " let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 
   " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
+  " let g:ctrlp_use_caching = 0
 endif
-call ctrlp_bdelete#init()
+" call ctrlp_bdelete#init()
 
 " Use fenced code blocks in markdown
 let g:markdown_fenced_languages=['ruby', 'javascript', 'clojure', 'sh', 'html', 'sass', 'scss', 'haml', 'erlang']
@@ -151,9 +156,13 @@ autocmd BufNewFile,BufReadPost *.md,*.markdown set filetype=markdown
 " inoremap kj <esc>
 
 " CtrlP buffer
-nnoremap <leader>b :CtrlPBuffer<cr>
+" nnoremap <leader>b :CtrlPBuffer<cr>
 
-nnoremap <leader>h "adiw:r!mix hex.info <C-r>a <bar> sed -n 's/Config\:\ // p'<cr>kJ
+" FZF Files
+nnoremap <silent> <c-p> :Files<cr>
+
+" FZF Buffer
+nnoremap <leader>b :Buffer<cr>
 
 " convert stupid ruby 1.8 hash syntax
 nnoremap <leader>19 :%s/:\(\w*\)\s*=>\s*/\1: /gci<cr>
@@ -202,15 +211,18 @@ map <silent> <leader>T :TestSuite<CR>
 map <silent> <leader>r :TestLast<CR>
 map <silent> <leader>g :TestVisit<CR>
 
+" make a @doc
 autocmd FileType elixir nnoremap <buffer> <leader>p Orequire IEx; IEx.pry()<esc>
+
+" format a dep
+autocmd FileType elixir nnoremap <leader>h "adiw:r!mix hex.info <C-r>a <bar> sed -n 's/Config\:\ // p'<cr>kJ
+
 
 autocmd FileType elixir nnoremap <buffer> <leader>d o@doc """<c-m>Documentation<c-m>"""<esc>kviw
 " Elixir - autoformat elixir if the current elixir version is 1.6.5 or above
 let s:elixir_version = system("elixir --version|tail -1")
 if s:elixir_version =~ '1.[6-9]'
-  autocmd BufWritePost *.exs silent call RunElixirFormatter()
-  autocmd BufWritePost *.ex silent call RunElixirFormatter()
-
+  autocmd BufWritePost *.exs,*.ex silent call RunElixirFormatter()
   function RunElixirFormatter()
     :!mix format %
     :e
