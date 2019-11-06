@@ -149,8 +149,8 @@ nnoremap <leader>b :Buffer<cr>
 nnoremap <leader>19 :%s/:\(\w*\)\s*=>\s*/\1: /gci<cr>
 nnoremap <leader>19! :%s/:\(\w*\)\s*=>\s*/\1: /gi<cr>
 
-" search with Ag
-nnoremap <leader>a :Ag<space>
+" search with Rg
+nnoremap <leader>a :Rg<space>
 
 " no-op fucking Q
 nnoremap Q <nop>
