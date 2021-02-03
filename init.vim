@@ -192,24 +192,25 @@ map <silent> <leader>T :TestSuite<CR>
 map <silent> <leader>r :TestLast<CR>
 map <silent> <leader>g :TestVisit<CR>
 
-" make a @doc
+" adds a <%= %>
+autocmd FileType eelixir nnoremap <buffer> <leader>s i<%= %><esc>hhi<space>
+
+" adds a pry
 autocmd FileType elixir nnoremap <buffer> <leader>p Orequire IEx; IEx.pry()<esc>
 
 " format a dep
 autocmd FileType elixir nnoremap <leader>h "adiw:r!mix hex.info <C-r>a <bar> sed -n 's/Config\:\ // p'<cr>kJ
 
-
+" make a @doc
 autocmd FileType elixir nnoremap <buffer> <leader>d o@doc """<c-m>Documentation<c-m>"""<esc>kviw
 " Elixir - autoformat elixir if the current elixir version is 1.6.5 or above
 let s:elixir_version = system("elixir --version|tail -1")
-if s:elixir_version =~ '1.[6-9]'
-  autocmd BufWritePost *.exs,*.ex silent call RunElixirFormatter()
-  function RunElixirFormatter()
-    :!mix format %
-    :e
-    :syntax on
-  endfunction
-endif
+autocmd BufWritePost *.exs,*.ex silent call RunElixirFormatter()
+function RunElixirFormatter()
+  :!mix format %
+  :e
+  :syntax on
+endfunction
 
 " Rust - autoformat rust when saving
 let g:rustfmt_autosave = 1
@@ -227,7 +228,7 @@ if has("nvim")
   " run tests with :T
   let test#strategy = "neoterm"
 
-  let g:neoterm_default_mod = "horizontal rightbelow"
+  " let g:neoterm_default_mod = "horizontal rightbelow"
 
   map <silent> <leader>c :T mix credo<CR>
   map <silent> <leader>q :Ttoggle<CR>
