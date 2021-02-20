@@ -109,7 +109,7 @@ set laststatus=2 " enable lightline even if no splits
 set showcmd
 set noshowmode
 let g:bufferline_echo = 0
-let g:lightline = { 'colorscheme': 'nord' }
+let g:lightline = { 'colorscheme': 'wombat' }
 
 " Elm
 let g:elm_format_autosave = 1
@@ -203,8 +203,7 @@ autocmd FileType elixir nnoremap <leader>h "adiw:r!mix hex.info <C-r>a <bar> sed
 
 " make a @doc
 autocmd FileType elixir nnoremap <buffer> <leader>d o@doc """<c-m>Documentation<c-m>"""<esc>kviw
-" Elixir - autoformat elixir if the current elixir version is 1.6.5 or above
-let s:elixir_version = system("elixir --version|tail -1")
+" Elixir - autoformat elixir
 autocmd BufWritePost *.exs,*.ex silent call RunElixirFormatter()
 function RunElixirFormatter()
   :!mix format %
