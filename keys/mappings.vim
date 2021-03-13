@@ -2,21 +2,27 @@ let mapleader=","
 
 "" MISC KEY MAPS
 
+" Use alt + hjkl to resize windows
+nnoremap <silent> <A-j>    :resize -2<cr>
+nnoremap <silent> <A-k>    :resize +2<cr>
+nnoremap <silent> <A-h>    :vertical resize -2<cr>
+nnoremap <silent> <A-l>    :vertical resize +2<cr>
+
 " FZF Files
 nnoremap <silent> <c-p> :Files<cr>
 
 " FZF Buffer
 nnoremap <leader>b :Buffer<cr>
 
-" convert stupid ruby 1.8 hash syntax
-autocmd FileType ruby nnoremap <leader>19 :%s/:\(\w*\)\s*=>\s*/\1: /gci<cr>
-autocmd FileType ruby nnoremap <leader>19! :%s/:\(\w*\)\s*=>\s*/\1: /gi<cr>
-
 " project search with Rg
 nnoremap <leader>a :Rg<space>
 
 " no-op fucking Q
 nnoremap Q <nop>
+
+" convert stupid ruby 1.8 hash syntax
+autocmd FileType ruby nnoremap <leader>19 :%s/:\(\w*\)\s*=>\s*/\1: /gci<cr>
+autocmd FileType ruby nnoremap <leader>19! :%s/:\(\w*\)\s*=>\s*/\1: /gi<cr>
 
 " quit all other splits
 nnoremap <silent> <leader>o :only<cr>
@@ -40,10 +46,10 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap <A-h> <C-w>h
-nnoremap <A-j> <C-w>j
-nnoremap <A-k> <C-w>k
-nnoremap <A-l> <C-w>l
+" nnoremap <A-h> <C-w>h
+" nnoremap <A-j> <C-w>j
+" nnoremap <A-k> <C-w>k
+" nnoremap <A-l> <C-w>l
 
 " Vim Test Mappings
 map <silent> <leader>t :TestNearest<CR>

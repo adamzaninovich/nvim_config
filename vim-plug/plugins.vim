@@ -37,8 +37,8 @@ Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'jtratner/vim-flavored-markdown', { 'for': 'markdown' }
 
 " UI Plugins
-" Plug 'arcticicestudio/nord-vim'
-Plug 'whatyouhide/vim-gotham'
+Plug 'arcticicestudio/nord-vim'
+" Plug 'whatyouhide/vim-gotham'
 Plug 'itchyny/lightline.vim'
 
 call plug#end()
