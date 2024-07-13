@@ -19,7 +19,7 @@ Plug 'mattn/emmet-vim'
 " Elixir and Phoenix
 Plug 'elixir-lang/vim-elixir'
 Plug 'avdgaag/vim-phoenix'
-" Plug 'slashmili/alchemist.vim'
+Plug 'slashmili/alchemist.vim'
 " Plug 'Shougo/deoplete.nvim'
 
 " Ruby and Rails
